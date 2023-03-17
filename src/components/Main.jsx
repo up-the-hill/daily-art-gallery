@@ -23,10 +23,10 @@ export default function Main({ data }) {
     makeAPICall(
       `https://api.artic.edu/api/v1/artworks/${Math.floor(
         (Math.random() * 1000000) % 119560
-      )}`
+      )}?fields=id,title,date_display,artist_display,image_id,thumbnail`
     );
   };
-
+	
   return (
     <main className="text-white">
       {isLoading && <h2>Loading...</h2>}

@@ -14,6 +14,7 @@ interface Response {
 		}
     date_display: string;
     artist_display: string;
+		image_id: string;
   };
 	info: {
 		license_text: string;
@@ -49,7 +50,7 @@ export async function getServerSideProps() {
   let artID = Math.floor((myrng() * 1000000) % 119560);
 
   // make api call
-  let daily_link = `https://api.artic.edu/api/v1/artworks/${artID}/?fields=id,title,date_display,artist_display,thumbnail`;
+  let daily_link = `https://api.artic.edu/api/v1/artworks/${artID}/?fields=id,title,date_display,artist_display,image_id,thumbnail`;
 
   // Fetch data from external API
   const res = await fetch(daily_link);
