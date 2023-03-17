@@ -1,53 +1,46 @@
-import { useEffect } from "react";
 import { useState } from "react";
-var seedrandom = require("seedrandom");
 
-export default function Main() {
-	let getNewArt = () => {
-		pass
-	}
-  // generate random art id based on today's date
-  let dateString = new Date().toDateString;
-  var myrng = seedrandom(dateString);
-  let artID = Math.floor((myrng() * 1000000) % 119560);
+export default function Main({ data }) {
+  const [artData, setArtData] = useState(data);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // make api call
-  let api_endpoint = `https://api.artic.edu/api/v1/artworks/${artID}`;
-  const [artData, setArtData] = useState(null);
-  useEffect(() => {
-    fetch(api_endpoint)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setArtData(data);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  }, []);
+  let makeAPICall = async (api_endpoint) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(api_endpoint);
+      const result = await response.json();
+      console.log(result);
+      setArtData(result);
+    } catch {
+      console.log("api error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  if (artData) {
-    let imageLink =
-      artData.config.iiif_url +
-      "/" +
-      artData.data.image_id +
-      "/full/843,/0/default.jpg";
-    return (
-      <main className="text-white">
-        <h1 className="m-4 text-4xl font-serif">{artData.data.title}</h1>
-        <h2 className="m-4">{artData.data.date_display}</h2>
-        <h2 className="m-4">{artData.data.artist_display}</h2>
-				<button onClick={getNewArt}>New</button>
-        <figure className="top-0 h-screen w-screen z-[-1] grid place-items-center fixed">
-          <img
-            src={imageLink}
-            alt={artData.data.thumbnail.alt_text}
-            className="h-screen"
-          ></img>
-        </figure>
-      </main>
+  let getNewArt = async () => {
+    setIsLoading(true);
+    makeAPICall(
+      `https://api.artic.edu/api/v1/artworks/${Math.floor(
+        (Math.random() * 1000000) % 119560
+      )}`
     );
-  } else {
-    return <h1 className="text-4xl">Loading...</h1>;
-  }
+  };
+
+  return (
+    <main className="text-white">
+      {isLoading && <h2>Loading...</h2>}
+			<h1 className="m-4 text-4xl font-serif">{artData.data.title}</h1>
+      <h2 className="m-4">{artData.data.date_display}</h2>
+      <h2 className="m-4">{artData.data.artist_display}</h2>
+      <button onClick={getNewArt} className="fixed top-4 right-4">New</button>
+      <figure className="top-0 h-screen w-screen z-[-1] grid place-items-center fixed">
+        <img
+          src={artData.config.iiif_url + "/" + artData.data.image_id + "/full/843,/0/default.jpg"}
+          alt={artData.data.thumbnail.alt_text}
+          className="h-screen"
+        ></img>
+      </figure>
+    </main>
+  ); 
 }
