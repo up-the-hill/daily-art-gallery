@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Main({ data }) {
   const [artData, setArtData] = useState(data);
@@ -31,7 +32,7 @@ export default function Main({ data }) {
 
   return (
     <main className="text-white">
-      {isLoading && <h2>Loading...</h2>}
+      {isLoading && <h2 className="">Loading...</h2>}
       <h1 className="m-4 text-4xl font-serif">{artData.data.title}</h1>
       <h2 className="m-4">{artData.data.date_display}</h2>
       <h2 className="m-4">{artData.data.artist_display}</h2>
@@ -39,16 +40,19 @@ export default function Main({ data }) {
         New
       </button>
       <figure className="top-0 h-screen w-screen z-[-1] grid place-items-center fixed">
-        <img
+        <Image
           src={
             artData.config.iiif_url +
             "/" +
             artData.data.image_id +
             "/full/843,/0/default.jpg"
           }
-          alt={artData.data.thumbnail.alt_text}
-          className="h-screen"
-        ></img>
+          width="0"
+          height="0"
+          sizes="100vw"
+          alt={artData.data.thumbnail.alt_text || artData.data.title}
+          className="h-screen w-auto"
+        ></Image>
       </figure>
     </main>
   );
