@@ -47,7 +47,15 @@ export async function getServerSideProps() {
   // generate random art id based on today's date
   let dateString = new Date().toDateString();
   var myrng = seedrandom(dateString);
-  let artID = Math.floor((myrng() * 1000000) % 119560);
+	let page = Math.floor(myrng() * 9964) + 1
+
+	// get a random page
+	let randomPageLink = `https://api.artic.edu/api/v1/artworks?page=${page}&fields=id`
+	const pageRes = await fetch(randomPageLink)
+	const pageData = await pageRes.json()
+
+	// select a random artID from the page
+	let artID = pageData['data'][Math.floor(myrng() * 13)].id
 
   // make api call
   let daily_link = `https://api.artic.edu/api/v1/artworks/${artID}/?fields=id,title,date_display,artist_display,image_id,thumbnail`;
