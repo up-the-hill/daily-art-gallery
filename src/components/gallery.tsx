@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import seedrandom from "seedrandom";
 import Response from "./gallery.types";
 import ArtDisplay from "./ArtDisplay";
+import HighResView from "./HighResView";
 
 export default function Gallery() {
   const [artData, setArtData] = useState<Response | null>(null);
@@ -41,6 +42,7 @@ export default function Gallery() {
   useEffect(() => {
     getDailyArt();
   }, []);
+
 
   const getNewArt = async () => {
     setIsLoading(true);
@@ -91,6 +93,29 @@ export default function Gallery() {
     );
   }
 
+
+  if (!artData) {
+    return <div>No data available</div>
+  }
+
+  const openHighResView = () => {
+    setIsHighResLoading(true)
+    setIsHighResMode(true)
+  }
+
+  const closeHighResView = () => {
+    setIsHighResMode(false)
+  }
+
+  function handleHighResImageLoad() {
+    setIsHighResLoading(false);
+  }
+
+  const { data } = artData
+  const highResImageUrl = `https://www.artic.edu/iiif/2/${data.image_id}/full/1686,/0/default.jpg`
+  const standardImageUrl = `https://www.artic.edu/iiif/2/${artData.data.image_id}/full/843,/0/default.jpg`
+  const altText = data.thumbnail.alt_text || data.title
+
   return (
     <div className="relative min-h-screen w-full bg-black overflow-hidden">
       {/* Background artwork */}
@@ -106,15 +131,8 @@ export default function Gallery() {
       {/* Main content */}
       <main className="relative z-20 min-h-screen flex flex-col items-center justify-center px-4 py-16">
         {/* Artwork display */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <img
-            src={`https://www.artic.edu/iiif/2/${artData?.data.image_id}/full/843,/0/default.jpg`}
-            alt={artData?.data.thumbnail.alt_text || artData?.data.title}
-            className="max-h-[70vh] w-auto object-contain shadow-2xl rounded-sm"
-          />
-        </div>
         <ArtDisplay
-          imageUrl={`https://www.artic.edu/iiif/2/${artData?.data.image_id}/full/843,/0/default.jpg`}
+          imageUrl={standardImageUrl}
           altText={altText}
           onOpenHighRes={openHighResView}
         />
@@ -122,12 +140,12 @@ export default function Gallery() {
         {/* Artwork info */}
         <div className="bg-black/70 backdrop-blur-md p-6 rounded-lg max-w-2xl mx-auto text-center">
           <h1 className="text-3xl md:text-4xl font-serif text-white mb-3 leading-tight">
-            {artData?.data.title}
+            {artData.data.title}
           </h1>
           <h2 className="text-xl text-gray-300 mb-2 font-light">
-            {artData?.data.artist_display}
+            {artData.data.artist_display}
           </h2>
-          <p className="text-gray-400 italic">{artData?.data.date_display}</p>
+          <p className="text-gray-400 italic">{artData.data.date_display}</p>
         </div>
       </main>
 
@@ -135,7 +153,7 @@ export default function Gallery() {
       <div className="absolute top-4 right-4 z-30">
         <button
           onClick={getNewArt}
-          className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-md border border-white/20 transition-all duration-300 flex items-center gap-2"
+          className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-full border border-white/20 transition-all duration-300"
           disabled={isLoading}
         >
           {isLoading ? (
@@ -144,10 +162,24 @@ export default function Gallery() {
               <span>Loading...</span>
             </>
           ) : (
-            <span>Discover New Art</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-ccw"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
           )}
         </button>
       </div>
+
+      {/* High Resolution View */}
+      {isHighResMode && (
+        <HighResView
+          imageUrl={highResImageUrl}
+          altText={altText}
+          // title={data.title}
+          // artist={data.artist_display}
+          // date={data.date_display}
+          isLoading={isHighResLoading}
+          onClose={closeHighResView}
+          onImageLoad={handleHighResImageLoad}
+        />
+      )}
 
       {/* Footer */}
       <footer className="absolute bottom-2 left-0 right-0 text-center text-xs text-gray-500">
