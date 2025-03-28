@@ -2,15 +2,17 @@ interface ArtDisplayProps {
   imageUrl: string
   altText: string | undefined
   onOpenHighRes: () => void
+  onImageLoad: () => void
 }
 
-export default function ArtDisplay({ imageUrl, altText, onOpenHighRes }: ArtDisplayProps) {
+export default function ArtDisplay({ imageUrl, altText, onOpenHighRes, onImageLoad }: ArtDisplayProps) {
   return (
     <div className="max-w-4xl mx-auto mb-8 relative group">
       <img
         src={imageUrl}
         alt={altText}
         className="max-h-[70vh] w-auto object-contain shadow-2xl rounded-sm cursor-pointer"
+        onLoad={onImageLoad}
         onClick={onOpenHighRes}
       />
       <div
