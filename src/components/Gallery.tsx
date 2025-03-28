@@ -151,6 +151,7 @@ export default function Gallery() {
           onClick={getNewArt}
           className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-full border border-white/20 transition-all duration-300"
           disabled={isLoading || !isImageLoaded}
+          aria-label="Get new art"
         >
           {isLoading ? (
             <span className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></span>
