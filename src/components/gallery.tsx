@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import seedrandom from 'seedrandom';
+import seedrandom from "seedrandom";
 import Response from "./gallery.types";
+import ArtDisplay from "./ArtDisplay";
 
 export default function Gallery() {
   const [artData, setArtData] = useState<Response | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isHighResMode, setIsHighResMode] = useState(false);
+  const [isHighResLoading, setIsHighResLoading] = useState(false);
 
   async function getDailyArt() {
     setIsLoading(true);
@@ -15,10 +18,12 @@ export default function Gallery() {
       const myrng = seedrandom(date);
       const page = Math.floor(myrng() * 9964) + 1;
 
-      const pageRes = await fetch(`https://api.artic.edu/api/v1/artworks?page=${page}&fields=id`);
+      const pageRes = await fetch(
+        `https://api.artic.edu/api/v1/artworks?page=${page}&fields=id`,
+      );
       const pageData = await pageRes.json();
 
-      const artID = pageData['data'][Math.floor(myrng() * 13)].id;
+      const artID = pageData["data"][Math.floor(myrng() * 13)].id;
       const daily_link = `https://api.artic.edu/api/v1/artworks/${artID}/?fields=id,title,date_display,artist_display,image_id,thumbnail`;
 
       const res = await fetch(daily_link);
@@ -26,7 +31,7 @@ export default function Gallery() {
 
       setArtData(data);
     } catch (err) {
-      setError('Failed to fetch art data.');
+      setError("Failed to fetch art data.");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -46,11 +51,13 @@ export default function Gallery() {
       const pageData = await pageRes.json();
 
       const artID = pageData["data"][Math.floor(Math.random() * 13)].id;
-      const response = await fetch(`https://api.artic.edu/api/v1/artworks/${artID}?fields=id,title,date_display,artist_display,image_id,thumbnail`);
+      const response = await fetch(
+        `https://api.artic.edu/api/v1/artworks/${artID}?fields=id,title,date_display,artist_display,image_id,thumbnail`,
+      );
       const result = await response.json();
       setArtData(result);
     } catch {
-      setError('Failed to fetch new art data.');
+      setError("Failed to fetch new art data.");
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +71,7 @@ export default function Gallery() {
           <p className="text-white text-xl font-serif">Discovering art...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -81,7 +88,7 @@ export default function Gallery() {
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -106,11 +113,20 @@ export default function Gallery() {
             className="max-h-[70vh] w-auto object-contain shadow-2xl rounded-sm"
           />
         </div>
+        <ArtDisplay
+          imageUrl={`https://www.artic.edu/iiif/2/${artData?.data.image_id}/full/843,/0/default.jpg`}
+          altText={altText}
+          onOpenHighRes={openHighResView}
+        />
 
         {/* Artwork info */}
         <div className="bg-black/70 backdrop-blur-md p-6 rounded-lg max-w-2xl mx-auto text-center">
-          <h1 className="text-3xl md:text-4xl font-serif text-white mb-3 leading-tight">{artData?.data.title}</h1>
-          <h2 className="text-xl text-gray-300 mb-2 font-light">{artData?.data.artist_display}</h2>
+          <h1 className="text-3xl md:text-4xl font-serif text-white mb-3 leading-tight">
+            {artData?.data.title}
+          </h1>
+          <h2 className="text-xl text-gray-300 mb-2 font-light">
+            {artData?.data.artist_display}
+          </h2>
           <p className="text-gray-400 italic">{artData?.data.date_display}</p>
         </div>
       </main>
@@ -138,5 +154,5 @@ export default function Gallery() {
         <p>Data from Art Institute of Chicago API</p>
       </footer>
     </div>
-  )
+  );
 }
