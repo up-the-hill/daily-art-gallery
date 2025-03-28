@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 interface HighResViewProps {
   imageUrl: string
@@ -6,9 +6,7 @@ interface HighResViewProps {
   // title: string
   // artist: string
   // date: string
-  isLoading: boolean
   onClose: () => void
-  onImageLoad: () => void
 }
 
 export default function HighResView({
@@ -17,10 +15,13 @@ export default function HighResView({
   // title,
   // artist,
   // date,
-  isLoading,
   onClose,
-  onImageLoad,
 }: HighResViewProps) {
+  let [isLoading, setIsLoading] = useState(true);
+
+  function onImageLoad() {
+    setIsLoading(false);
+  }
   // Handle escape key to close
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

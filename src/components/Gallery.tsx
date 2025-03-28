@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import seedrandom from "seedrandom"
 import type Response from "./gallery.types"
@@ -12,7 +10,6 @@ export default function Gallery() {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isHighResMode, setIsHighResMode] = useState(false)
-  const [isHighResLoading, setIsHighResLoading] = useState(false)
 
   async function getDailyArt() {
     setIsLoading(true)
@@ -92,16 +89,11 @@ export default function Gallery() {
   }
 
   const openHighResView = () => {
-    setIsHighResLoading(true)
     setIsHighResMode(true)
   }
 
   const closeHighResView = () => {
     setIsHighResMode(false)
-  }
-
-  function handleHighResImageLoad() {
-    setIsHighResLoading(false)
   }
 
   const { data } = artData
@@ -188,9 +180,7 @@ export default function Gallery() {
         <HighResView
           imageUrl={highResImageUrl}
           altText={altText}
-          isLoading={isHighResLoading}
           onClose={closeHighResView}
-          onImageLoad={handleHighResImageLoad}
         />
       )}
 
