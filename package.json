@@ -11,7 +11,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
     "@types/seedrandom": "^3.0.8",
-    "preact": "^10.26.9",
+    "preact": "^10.26.10",
     "seedrandom": "^3.0.5",
     "tailwindcss": "^4.1.11"
   },
