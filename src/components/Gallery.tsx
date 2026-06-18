@@ -23,7 +23,7 @@ export default function Gallery() {
       const pageRes = await fetch(`https://api.artic.edu/api/v1/artworks?page=${page}&fields=id`)
       const pageData = await pageRes.json()
 
-      const artID = pageData["data"][Math.floor(myrng() * 13)].id
+      const artID = pageData["data"][Math.floor(myrng() * pageData["data"].length)].id
       const daily_link = `https://api.artic.edu/api/v1/artworks/${artID}/?fields=id,title,date_display,artist_display,image_id,thumbnail`
 
       const res = await fetch(daily_link)
@@ -50,7 +50,7 @@ export default function Gallery() {
       const pageRes = await fetch(randomPageLink)
       const pageData = await pageRes.json()
 
-      const artID = pageData["data"][Math.floor(Math.random() * 13)].id
+      const artID = pageData["data"][Math.floor(Math.random() * pageData["data"].length)].id
       const response = await fetch(
         `https://api.artic.edu/api/v1/artworks/${artID}?fields=id,title,date_display,artist_display,image_id,thumbnail`,
       )
